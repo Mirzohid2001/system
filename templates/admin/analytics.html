@@ -1,0 +1,84 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<style>
+  .analytics-container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      max-width: 900px;
+      margin: auto;
+  }
+  .analytics-title {
+      color: #3f51b5;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-align: center;
+  }
+  .analytics-separator {
+      border: none;
+      border-top: 2px solid #dadce0;
+      margin: 1.5rem 0;
+  }
+  .analytics-list {
+      list-style: none;
+      padding-left: 0;
+      font-size: 1.1rem;
+  }
+  .analytics-list li {
+      margin: 0.75rem 0;
+  }
+  .analytics-label {
+      font-weight: bold;
+      color: #555;
+      margin-right: 0.5rem;
+  }
+</style>
+
+<div class="analytics-container">
+  <h1 class="analytics-title">Analytics Dashboard</h1>
+  <hr class="analytics-separator">
+
+  <h3>Общая статистика</h3>
+  <ul class="analytics-list">
+    <li><span class="analytics-label">Всего пользователей:</span> {{ total_users }}</li>
+    <li><span class="analytics-label">Всего объявлений:</span> {{ total_announcements }}</li>
+    <li><span class="analytics-label">Всего платежей:</span> {{ total_payments }}</li>
+  </ul>
+
+  <hr class="analytics-separator">
+
+  <h3>1 день (последние 24 часа)</h3>
+  <ul class="analytics-list">
+    <li><span class="analytics-label">Пользователи:</span> {{ daily_users }}</li>
+    <li><span class="analytics-label">Объявления:</span> {{ daily_ann }}</li>
+    <li><span class="analytics-label">Платежи:</span> {{ daily_pay }}</li>
+  </ul>
+
+  <h3>1 неделя (последние 7 дней)</h3>
+  <ul class="analytics-list">
+    <li><span class="analytics-label">Пользователи:</span> {{ weekly_users }}</li>
+    <li><span class="analytics-label">Объявления:</span> {{ weekly_ann }}</li>
+    <li><span class="analytics-label">Платежи:</span> {{ weekly_pay }}</li>
+  </ul>
+
+  <h3>1 месяц (последние 30 дней)</h3>
+  <ul class="analytics-list">
+    <li><span class="analytics-label">Пользователи:</span> {{ monthly_users }}</li>
+    <li><span class="analytics-label">Объявления:</span> {{ monthly_ann }}</li>
+    <li><span class="analytics-label">Платеж:</span> {{ monthly_pay }}</li>
+  </ul>
+
+  <h3>1 год (последние 365 дней)</h3>
+  <ul class="analytics-list">
+    <li><span class="analytics-label">Пользователи:</span> {{ yearly_users }}</li>
+    <li><span class="analytics-label">Объявления:</span> {{ yearly_ann }}</li>
+    <li><span class="analytics-label">Платеж:</span> {{ yearly_pay }}</li>
+  </ul>
+</div>
+{% endblock %}
