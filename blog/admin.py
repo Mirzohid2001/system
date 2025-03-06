@@ -53,6 +53,7 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'announcement__title', 'text')
 
 
+
 @admin.register(AnalyticsDummy)
 class AnalyticsAdminView(admin.ModelAdmin):
     def has_add_permission(self, request):
