@@ -15,6 +15,11 @@ PLAN_PRIORITY = {
     'basic': 1
 }
 
+def save(self, *args, **kwargs):
+    # Always update priority when saving to ensure consistency
+    self.priority = PLAN_PRIORITY.get(self.plan, 1)
+    super().save(*args, **kwargs)
+
 STATUS_CHOICES = (
     ('draft', 'Draft'),
     ('published', 'Published'),
@@ -70,6 +75,15 @@ class Announcement(models.Model):
         self.priority = PLAN_PRIORITY.get(self.plan, 1)
         super().save(*args, **kwargs)
 
+    def get_position_label(self):
+        """Returns a human-readable position based on the plan"""
+        if self.plan == 'top':
+            return "Top of the board"
+        elif self.plan == 'medium':
+            return "Middle of the board"
+        else:
+            return "Lower part of the board"
+            
     def __str__(self):
         return self.title
     
