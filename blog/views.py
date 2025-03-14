@@ -40,6 +40,10 @@ class AnnouncementListCreateView(generics.ListCreateAPIView):
     search_fields = ['title', 'description']
     ordering_fields = ['priority', 'created_at','price']
 
+    def get_queryset(self):
+        """Helper method to get announcements in the correct order by plan status"""
+        return Announcement.objects.all().order_by('-priority', '-created_at')
+    
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return AnnouncementCreateSerializer
