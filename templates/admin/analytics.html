@@ -1,84 +1,113 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 
-{% block title %}Analytics Dashboard{% endblock %}
+{% block title %}Аналитика{% endblock %}
 
 {% block content %}
 <style>
-  .analytics-container {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 8px;
-      margin-top: 2rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      max-width: 900px;
-      margin: auto;
+  .dashboard-container {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 950px;
+    margin: 40px auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
-  .analytics-title {
-      color: #3f51b5;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      text-align: center;
+
+  .dashboard-title {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+    font-weight: 600;
   }
-  .analytics-separator {
-      border: none;
-      border-top: 2px solid #dadce0;
-      margin: 1.5rem 0;
+
+  .stats-section {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
   }
-  .analytics-list {
-      list-style: none;
-      padding-left: 0;
-      font-size: 1.1rem;
+
+  .stats-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #6a11cb;
+    padding-bottom: 8px;
   }
-  .analytics-list li {
-      margin: 0.75rem 0;
+
+  .stats-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
   }
-  .analytics-label {
-      font-weight: bold;
-      color: #555;
-      margin-right: 0.5rem;
+
+  .stats-list li {
+    padding: 10px;
+    background: #f0f4f8;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-weight: 500;
+  }
+
+  .stats-label {
+    font-weight: 600;
+    color: #6a11cb;
+    margin-right: 5px;
   }
 </style>
 
-<div class="analytics-container">
-  <h1 class="analytics-title">Analytics Dashboard</h1>
-  <hr class="analytics-separator">
+<div class="dashboard-container">
+  <h1 class="dashboard-title">📊 Аналитика проекта</h1>
 
-  <h3>Общая статистика</h3>
-  <ul class="analytics-list">
-    <li><span class="analytics-label">Всего пользователей:</span> {{ total_users }}</li>
-    <li><span class="analytics-label">Всего объявлений:</span> {{ total_announcements }}</li>
-    <li><span class="analytics-label">Всего платежей:</span> {{ total_payments }}</li>
-  </ul>
+  <div class="stats-section">
+    <h3>🌟 Общая статистика</h3>
+    <ul class="stats-list">
+      <li><span class="stats-label">👤 Пользователи:</span> {{ total_users }}</li>
+      <li><span class="stats-label">📢 Объявления:</span> {{ total_announcements }}</li>
+      <li><span class="stats-label">💳 Платежи (сумма):</span> {{ total_payments }}</li>
+    </ul>
+  </div>
 
-  <hr class="analytics-separator">
+  <div class="stats-section">
+    <h3>📅 Статистика за последние 24 часа</h3>
+    <ul class="stats-list">
+      <li><span class="stats-label">👥 Пользователи:</span> {{ daily_users }}</li>
+      <li><span class="stats-label">🔔 Объявления:</span> {{ daily_ann }}</li>
+      <li><span class="stats-label">💰 Платежи:</span> {{ daily_pay }}</li>
+    </ul>
+  </div>
 
-  <h3>1 день (последние 24 часа)</h3>
-  <ul class="analytics-list">
-    <li><span class="analytics-label">Пользователи:</span> {{ daily_users }}</li>
-    <li><span class="analytics-label">Объявления:</span> {{ daily_ann }}</li>
-    <li><span class="analytics-label">Платежи:</span> {{ daily_pay }}</li>
-  </ul>
+  <div class="stats-section">
+    <h3>🗓️ Статистика за последнюю неделю</h3>
+    <ul class="stats-list">
+      <li><span class="stats-label">👥 Пользователи:</span> {{ weekly_users }}</li>
+      <li><span class="stats-label">🔔 Объявления:</span> {{ weekly_ann }}</li>
+      <li><span class="stats-label">💰 Платежи:</span> {{ weekly_pay }}</li>
+    </ul>
+  </div>
 
-  <h3>1 неделя (последние 7 дней)</h3>
-  <ul class="analytics-list">
-    <li><span class="analytics-label">Пользователи:</span> {{ weekly_users }}</li>
-    <li><span class="analytics-label">Объявления:</span> {{ weekly_ann }}</li>
-    <li><span class="analytics-label">Платежи:</span> {{ weekly_pay }}</li>
-  </ul>
+  <div class="stats-section">
+    <h3>📆 Статистика за последний месяц</h3>
+    <ul class="stats-list">
+      <li><span class="stats-label">👥 Пользователи:</span> {{ monthly_users }}</li>
+      <li><span class="stats-label">🔔 Объявления:</span> {{ monthly_ann }}</li>
+      <li><span class="stats-label">💰 Платежи:</span> {{ monthly_pay }}</li>
+    </ul>
+  </div>
 
-  <h3>1 месяц (последние 30 дней)</h3>
-  <ul class="analytics-list">
-    <li><span class="analytics-label">Пользователи:</span> {{ monthly_users }}</li>
-    <li><span class="analytics-label">Объявления:</span> {{ monthly_ann }}</li>
-    <li><span class="analytics-label">Платеж:</span> {{ monthly_pay }}</li>
-  </ul>
+  <div class="stats-section">
+    <h3>📈 Статистика за последний год</h3>
+    <ul class="stats-list">
+      <li><span class="stats-label">👥 Пользователи:</span> {{ yearly_users }}</li>
+      <li><span class="stats-label">🔔 Объявления:</span> {{ yearly_ann }}</li>
+      <li><span class="stats-label">💰 Платежи:</span> {{ yearly_pay }}</li>
+    </ul>
+  </div>
 
-  <h3>1 год (последние 365 дней)</h3>
-  <ul class="analytics-list">
-    <li><span class="analytics-label">Пользователи:</span> {{ yearly_users }}</li>
-    <li><span class="analytics-label">Объявления:</span> {{ yearly_ann }}</li>
-    <li><span class="analytics-label">Платеж:</span> {{ yearly_pay }}</li>
-  </ul>
 </div>
 {% endblock %}

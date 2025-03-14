@@ -2,12 +2,23 @@ from django.db import models
 from users.models import User
 from mptt.models import MPTTModel, TreeForeignKey
 
+PLAN_CHOICES = [
+    ('basic', 'Basic'),
+    ('standard', 'Standard'),
+    ('top', 'Top'),
+]
 
-PLAN_CHOICES = (
-    ('top', 'Top'),       
-    ('medium', 'Medium'), 
-    ('basic', 'Basic'),   
-)
+class Plan(models.Model):
+    name = models.CharField(max_length=20, choices=PLAN_CHOICES, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    priority = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.get_name_display()} - {self.amount} RUB"
+
+    class Meta:
+        verbose_name = 'Тарифный план'
+        verbose_name_plural = 'Тарифные планы'
 
 PLAN_PRIORITY = {
     'top': 3,
@@ -60,7 +71,7 @@ class Announcement(models.Model):
     condition = models.CharField(max_length=50, blank=True, null=True)  
     location = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
-    plan = models.CharField(max_length=20, choices=PLAN_CHOICES, default='basic')
+    plan = models.ForeignKey('Plan', on_delete=models.SET_NULL, null=True, blank=True)
     priority = models.IntegerField(default=1) 
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -94,25 +105,16 @@ class AnnouncementImage(models.Model):
         verbose_name_plural = 'Изображения объявлений'
 
 class Payment(models.Model):
-    PLAN_AMOUNTS = {
-        'top': 100000,
-        'medium': 50000,
-        'basic': 10000
-    }
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE)
-    plan = models.CharField(max_length=20, choices=PLAN_CHOICES)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    plan = models.ForeignKey(Plan, on_delete=models.SET_NULL, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_id = models.CharField(max_length=100, null=True, blank=True)
+    paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        if not self.amount:
-            self.amount = self.PLAN_AMOUNTS.get(self.plan, 10000)
-        super().save(*args, **kwargs)
-
     def __str__(self):
-        return f"{self.user.username} -> {self.plan} ({self.amount})"
+        return f"{self.user.username} - {self.plan.name} ({self.amount})"
     
     class Meta:
         verbose_name = 'Платеж'

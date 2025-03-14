@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@b$h42+s)otrbuubbi#d4zhga_jv56)tct8_=4+8w1iyvv#emn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['https://www.pythonanywhere.com/user/MirzohidSax/']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -58,6 +58,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+YOOKASSA_SHOP_ID = '1017311'
+YOOKASSA_SECRET_KEY = 'live_tHijAoMLOVGy_Caw-tQuQOfRdoZk-5vKaMLtDNEXmcc'
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -137,7 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 

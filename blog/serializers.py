@@ -12,7 +12,7 @@ class CategoryTreeSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
 
     class Meta:
-        model = Category
+        model = Category   
         fields = ['id', 'name', 'parent', 'children']
 
     def get_children(self, obj):
@@ -77,23 +77,20 @@ class AnnouncementCreateSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['id', 'announcement', 'plan', 'amount', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        fields = ['id', 'announcement', 'plan', 'amount', 'payment_id', 'paid', 'created_at']
+        read_only_fields = ['id', 'amount', 'payment_id', 'paid', 'created_at']
 
-    def validate(self, attrs):
+    def validate_announcement(self, announcement):
         user = self.context['request'].user
-        announcement = attrs['announcement']
         if announcement.user != user:
-            raise ValidationError("Вы можете оплатить только свое объявление.")
-        return attrs
+            raise serializers.ValidationError("Вы можете оплатить только своё объявление.")
+        return announcement
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        payment = Payment.objects.create(user=user, **validated_data)
-        announcement = payment.announcement
-        announcement.plan = payment.plan
-        announcement.save()
-        return payment
+        plan = validated_data['plan']
+        validated_data['amount'] = plan.amount
+        return super().create(validated_data)
+
     
 class FavoriteSerializer(serializers.ModelSerializer):
     announcement_title = serializers.ReadOnlyField(source='announcement.title')
