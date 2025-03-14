@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy
+from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News
 from mptt.admin import DraggableMPTTAdmin
 
 User = get_user_model()
@@ -43,6 +43,11 @@ class PaymentAdmin(admin.ModelAdmin):
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'announcement', 'created_at')
     search_fields = ('user__username', 'announcement__title')
+
+@admin.register(News)
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'created_at')
+    search_fields = ('title',)
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Announcement, AnnouncementImage ,Payment,Favorite,Comment
+from .models import Category, Announcement, AnnouncementImage ,Payment,Favorite,Comment,News
 from django.core.exceptions import ValidationError
 
 
@@ -114,4 +114,12 @@ class CommentSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         comment = Comment.objects.create(user=user, **validated_data)
         return comment
+    
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
+        fields = ['id', 'title', 'content','image', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+
 

@@ -38,7 +38,6 @@ class LoginView(APIView):
     
 class UserProfileView(APIView):
     def get(self, request):
-        # Faqat o‘z profilini ko‘rish
         if not request.user.is_authenticated:
             return Response({"detail": "Tizimga kiring."}, status=401)
         profile, created = UserProfile.objects.get_or_create(user=request.user)

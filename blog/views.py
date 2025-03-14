@@ -7,8 +7,8 @@ from rest_framework import generics
 from django.core.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from .serializers import AnnouncementSerializer, AnnouncementCreateSerializer,PaymentSerializer,FavoriteSerializer,CommentSerializer
-from .models import Announcement, Payment,Favorite,Comment
+from .serializers import AnnouncementSerializer, AnnouncementCreateSerializer,PaymentSerializer,FavoriteSerializer,CommentSerializer,NewsSerializer
+from .models import Announcement, Payment,Favorite,Comment,News
 from rest_framework.generics import RetrieveAPIView
 from django.db.models import Q
 import random
@@ -252,3 +252,7 @@ class GlobalSearchView(APIView):
             "categories": cat_serializer.data
         }
         return Response(data, status=status.HTTP_200_OK)
+    
+class NewsListView(generics.ListAPIView):
+    queryset = News.objects.all().order_by('-created_at')
+    serializer_class = NewsSerializer

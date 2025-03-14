@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CategoryView, CategoryDetailView, AnnouncementListCreateView, AnnouncementDetailView, FavoriteListCreateView, FavoriteDeleteView, CommentListCreateView, AnnouncementRecommendationView,GlobalSearchView,CreatePaymentAPIView,CheckPaymentStatusAPIView
+from .views import CategoryView, CategoryDetailView, AnnouncementListCreateView, AnnouncementDetailView, FavoriteListCreateView, FavoriteDeleteView, CommentListCreateView, AnnouncementRecommendationView,GlobalSearchView,CreatePaymentAPIView,CheckPaymentStatusAPIView,NewsListView
 
 urlpatterns = [
     path('categories/',CategoryView.as_view(),name='categories'),
@@ -13,4 +13,5 @@ urlpatterns = [
     path('comments/', CommentListCreateView.as_view(), name='comments-list-create'),
     path('announcements/<int:pk>/recommendations/', AnnouncementRecommendationView.as_view(), name='recommendations'),
     path('search/', GlobalSearchView.as_view(), name='global-search'),
+    path('news/', NewsListView.as_view(), name='news-list'),
 ]
