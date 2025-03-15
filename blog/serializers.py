@@ -106,14 +106,27 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'announcement', 'announcement_title', 'user_name',
-                  'text', 'rating', 'created_at']
-        read_only_fields = ['id', 'created_at', 'user_name', 'announcement_title']
+        fields = [
+            'id', 
+            'announcement', 
+            'announcement_title', 
+            'user_name',
+            'text', 
+            'rating', 
+            'created_at'
+        ]
+        read_only_fields = [
+            'id', 
+            'created_at', 
+            'user_name', 
+            'announcement_title'
+        ]
 
     def create(self, validated_data):
         user = self.context['request'].user
         comment = Comment.objects.create(user=user, **validated_data)
         return comment
+
     
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
