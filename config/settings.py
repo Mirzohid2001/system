@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-@b$h42+s)otrbuubbi#d4zhga_jv56)tct8_=4+8w1iyvv#emn
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://mirzohidjon.pythonanywhere.com/', '127.0.0.1', 'localhost']
 
 
 
@@ -84,6 +84,10 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
 
 ROOT_URLCONF = 'config.urls'
 
