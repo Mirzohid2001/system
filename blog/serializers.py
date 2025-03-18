@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Announcement, AnnouncementImage ,Payment,Favorite,Comment,News
+from .models import Category, Announcement, AnnouncementImage ,Payment,Favorite,Comment,News,Message,Chat
 from django.core.exceptions import ValidationError
 
 
@@ -133,6 +133,30 @@ class NewsSerializer(serializers.ModelSerializer):
         model = News
         fields = ['id', 'title', 'content','image', 'created_at']
         read_only_fields = ['id', 'created_at']
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender = serializers.ReadOnlyField(source='sender.username')
+
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'text', 'created_at']
+
+
+class ChatSerializer(serializers.ModelSerializer):
+    messages = MessageSerializer(many=True, read_only=True)
+    participants = serializers.SlugRelatedField(many=True, read_only=True, slug_field='username')
+
+    class Meta:
+        model = Chat
+        fields = ['id', 'announcement', 'product', 'participants', 'messages', 'created_at']
+
+
+
+
+
+
+
 
 
 

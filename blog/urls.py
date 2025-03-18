@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CategoryView, CategoryDetailView, AnnouncementListCreateView, AnnouncementDetailView, FavoriteListCreateView, FavoriteDeleteView, CommentListCreateView, AnnouncementRecommendationView,GlobalSearchView,CreatePaymentAPIView,CheckPaymentStatusAPIView,NewsListView
+from .views import CategoryView, CategoryDetailView, AnnouncementListCreateView, AnnouncementDetailView, FavoriteListCreateView, FavoriteDeleteView, CommentListCreateView, AnnouncementRecommendationView,GlobalSearchView,CreatePaymentAPIView,CheckPaymentStatusAPIView,NewsListView,UserChatsAPIView,ChatCreateOrGetAPIView,MessageCreateAPIView
 
 urlpatterns = [
     path('categories/',CategoryView.as_view(),name='categories'),
@@ -14,4 +14,7 @@ urlpatterns = [
     path('announcements/<int:pk>/recommendations/', AnnouncementRecommendationView.as_view(), name='recommendations'),
     path('search/', GlobalSearchView.as_view(), name='global-search'),
     path('news/', NewsListView.as_view(), name='news-list'),
+    path('chats/', UserChatsAPIView.as_view(), name='user-chats'),
+    path('chats/create/', ChatCreateOrGetAPIView.as_view(), name='chat-create-or-get'),
+    path('chats/<int:chat_id>/messages/', MessageCreateAPIView.as_view(), name='message-create'),
 ]

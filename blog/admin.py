@@ -5,8 +5,8 @@ from django.db.models import Sum
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.db import models
-
-from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News
+from django.core.exceptions import PermissionDenied
+from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News,Chat,Message
 from mptt.admin import DraggableMPTTAdmin
 
 User = get_user_model()
@@ -94,3 +94,23 @@ class AnalyticsAdminView(admin.ModelAdmin):
         })
 
         return super().changelist_view(request, extra_context=extra_context)
+    
+@admin.register(Chat)
+class ChatAdmin(admin.ModelAdmin):
+    list_display = ('id', 'announcement', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('id', 'participants__username')
+    filter_horizontal = ('participants',) 
+    date_hierarchy = 'created_at'
+    ordering = ('-created_at',)
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'chat', 'sender', 'text', 'created_at')
+    list_filter = ('created_at', 'chat')
+    search_fields = ('sender__username', 'text')
+    date_hierarchy = 'created_at'
+    ordering = ('-created_at',)
+    readonly_fields = ('created_at',)
+
+

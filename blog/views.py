@@ -7,8 +7,8 @@ from rest_framework import generics
 from django.core.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from .serializers import AnnouncementSerializer, AnnouncementCreateSerializer,PaymentSerializer,FavoriteSerializer,CommentSerializer,NewsSerializer
-from .models import Announcement, Payment,Favorite,Comment,News
+from .serializers import AnnouncementSerializer, AnnouncementCreateSerializer,PaymentSerializer,FavoriteSerializer,CommentSerializer,NewsSerializer,ChatSerializer,MessageSerializer
+from .models import Announcement, Payment,Favorite,Comment,News,Chat,Message
 from rest_framework.generics import RetrieveAPIView
 from django.db.models import Q
 import random
@@ -18,6 +18,8 @@ from django.conf import settings
 from yookassa import Configuration, Payment as YooPayment
 import uuid
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAdminUser, AllowAny
+
 # Create your views here.
 
 Configuration.account_id = settings.YOOKASSA_SHOP_ID
@@ -256,3 +258,50 @@ class GlobalSearchView(APIView):
 class NewsListView(generics.ListAPIView):
     queryset = News.objects.all().order_by('-created_at')
     serializer_class = NewsSerializer
+
+class ChatCreateOrGetAPIView(APIView):
+
+    def post(self, request):
+        announcement_id = request.data.get('announcement_id')
+        product_id = request.data.get('product_id')
+
+        if announcement_id:
+            announcement = get_object_or_404(Announcement, id=announcement_id)
+            chat, created = Chat.objects.get_or_create(
+                announcement=announcement
+            )
+        elif product_id:
+            product = get_object_or_404(Product, id=product_id)
+            chat, created = Chat.objects.get_or_create(
+                product=product
+            )
+        else:
+            return Response({"error": "Обязательно наличие announcement_id или product_id!"}, status=400)
+
+        chat.participants.add(request.user)
+
+        if product_id:
+            chat.participants.add(product.admin)
+        if announcement_id:
+            chat.participants.add(announcement.user)
+
+        serializer = ChatSerializer(chat)
+        return Response(serializer.data, status=200)
+
+
+class MessageCreateAPIView(APIView):
+
+    def post(self, request, chat_id):
+        chat = get_object_or_404(Chat, id=chat_id, participants=request.user)
+        serializer = MessageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(sender=request.user, chat=chat)
+        return Response(serializer.data, status=201)
+    
+class UserChatsAPIView(generics.ListAPIView):
+    serializer_class = ChatSerializer
+
+    def get_queryset(self):
+        return self.request.user.chats.all()
+
+

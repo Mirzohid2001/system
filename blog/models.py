@@ -10,7 +10,7 @@ PLAN_CHOICES = [
 
 class Plan(models.Model):
     name = models.CharField(max_length=20, choices=PLAN_CHOICES, unique=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     priority = models.IntegerField(default=1)
 
     def __str__(self):
@@ -86,7 +86,6 @@ class Announcement(models.Model):
         super().save(*args, **kwargs)
 
     def get_position_label(self):
-        """Returns a human-readable position based on the plan"""
         if self.plan == 'top':
             return "Top of the board"
         elif self.plan == 'medium':
@@ -178,5 +177,45 @@ class News(models.Model):
     class Meta:
         verbose_name = 'Новость'    
         verbose_name_plural = 'Новости'
+
+class Chat(models.Model):
+    announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE, related_name='chats', null=True, blank=True)
+    participants = models.ManyToManyField(User, related_name='chats')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.announcement:
+            return f"Chat about Announcement: {self.announcement.title}"
+        return "General Chat"
+    
+    class Meta:
+        verbose_name = 'Чат'
+        verbose_name_plural = 'Чаты'
+    
+class Message(models.Model):
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.text[:20]}"
+    
+    class Meta:
+        verbose_name = 'Сообщение'
+        verbose_name_plural = 'Сообщения'
+    
+
+
+
+    
+
+
+        
+
+
 
 
