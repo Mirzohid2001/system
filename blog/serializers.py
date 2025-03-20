@@ -90,14 +90,20 @@ class PaymentSerializer(serializers.ModelSerializer):
         plan = validated_data['plan']
         validated_data['amount'] = plan.amount
         return super().create(validated_data)
+    
+class AnnouncementImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AnnouncementImage
+        fields = ['id', 'image']
 
     
 class FavoriteSerializer(serializers.ModelSerializer):
     announcement_title = serializers.ReadOnlyField(source='announcement.title')
+    announcement_images = AnnouncementImageSerializer(source='announcement.images', many=True, read_only=True)
 
     class Meta:
         model = Favorite
-        fields = ['id', 'announcement', 'announcement_title', 'created_at']
+        fields = ['id', 'announcement', 'announcement_title', 'announcement_images', 'created_at']
         read_only_fields = ['id', 'created_at']
 
 class CommentSerializer(serializers.ModelSerializer):
