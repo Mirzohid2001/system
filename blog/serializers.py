@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Announcement, AnnouncementImage ,Payment,Favorite,Comment,News,Message,Chat,Banner
-from django.core.exceptions import ValidationError
-
+from .models import Category, Announcement, AnnouncementImage, Payment, Favorite, Comment, News, Message, Chat, Banner
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,7 +15,7 @@ class CategoryTreeSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
 
     class Meta:
-        model = Category   
+        model = Category
         fields = ['id', 'name', 'parent', 'children']
 
     def get_children(self, obj):
@@ -30,9 +28,7 @@ class AnnouncementImageSerializer(serializers.ModelSerializer):
 
 class AnnouncementSerializer(serializers.ModelSerializer):
     images = AnnouncementImageSerializer(many=True, read_only=True)
-
     user = serializers.ReadOnlyField(source='user.username')
-
     category = serializers.SerializerMethodField()
 
     class Meta:
@@ -77,23 +73,16 @@ class AnnouncementCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         images_data = validated_data.pop('images', [])
-        request = self.context.get('request', None)
+        request = self.context.get('request')
         if request and hasattr(request, 'user'):
             validated_data['user'] = request.user
         announcement = Announcement.objects.create(**validated_data)
-
         for image_data in images_data:
-            AnnouncementImage.objects.create(
-                announcement=announcement, 
-                image=image_data
-            )
+            AnnouncementImage.objects.create(announcement=announcement, image=image_data)
         return announcement
 
     def to_representation(self, instance):
         return AnnouncementSerializer(instance, context=self.context).data
-
-
-
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -112,23 +101,13 @@ class PaymentSerializer(serializers.ModelSerializer):
         validated_data['amount'] = plan.amount
         return super().create(validated_data)
 
-    
-class AnnouncementImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AnnouncementImage
-        fields = ['id', 'image']
-
-
 class CategoryDetailSerializer(serializers.ModelSerializer):
-    announcements = AnnouncementSerializer(
-        many=True,
-        read_only=True,
-    )
-    
+    announcements = AnnouncementSerializer(many=True, read_only=True)
+
     class Meta:
         model = Category
         fields = ['id', 'name', 'image', 'announcements']
-    
+
 class FavoriteSerializer(serializers.ModelSerializer):
     announcement_title = serializers.ReadOnlyField(source='announcement.title')
     announcement_images = AnnouncementImageSerializer(source='announcement.images', many=True, read_only=True)
@@ -145,33 +124,20 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = [
-            'id', 
-            'announcement', 
-            'announcement_title', 
-            'user_name',
-            'text', 
-            'rating', 
-            'created_at'
+            'id', 'announcement', 'announcement_title',
+            'user_name', 'text', 'rating', 'created_at'
         ]
-        read_only_fields = [
-            'id', 
-            'created_at', 
-            'user_name', 
-            'announcement_title'
-        ]
+        read_only_fields = ['id', 'created_at', 'user_name', 'announcement_title']
 
     def create(self, validated_data):
         user = self.context['request'].user
-        comment = Comment.objects.create(user=user, **validated_data)
-        return comment
+        return Comment.objects.create(user=user, **validated_data)
 
-    
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = ['id', 'title', 'content','image', 'created_at']
+        fields = ['id', 'title', 'content', 'image', 'created_at']
         read_only_fields = ['id', 'created_at']
-
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = serializers.ReadOnlyField(source='sender.username')
@@ -180,7 +146,6 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = ['id', 'sender', 'text', 'created_at']
 
-
 class ChatSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True, read_only=True)
     participants = serializers.SlugRelatedField(many=True, read_only=True, slug_field='username')
@@ -188,13 +153,3 @@ class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = ['id', 'announcement', 'participants', 'messages', 'created_at']
-
-
-
-
-
-
-
-
-
-
