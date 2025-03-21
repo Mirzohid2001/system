@@ -1,7 +1,12 @@
 from rest_framework import serializers
-from .models import Category, Announcement, AnnouncementImage ,Payment,Favorite,Comment,News,Message,Chat
+from .models import Category, Announcement, AnnouncementImage ,Payment,Favorite,Comment,News,Message,Chat,Banner
 from django.core.exceptions import ValidationError
 
+
+class BannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Banner
+        fields = ['id', 'image', 'alt_text']
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,21 +28,31 @@ class AnnouncementImageSerializer(serializers.ModelSerializer):
         model = AnnouncementImage
         fields = ['id', 'image']
 
-
 class AnnouncementSerializer(serializers.ModelSerializer):
     images = AnnouncementImageSerializer(many=True, read_only=True)
+
     user = serializers.ReadOnlyField(source='user.username')
-    category = CategorySerializer(read_only=True)
+
+    category = serializers.SerializerMethodField()
 
     class Meta:
         model = Announcement
         fields = [
             'id', 'title', 'description', 'category',
             'condition', 'location', 'status',
-            'plan','price', 'priority', 'created_at', 'updated_at',
+            'plan', 'price', 'priority',
+            'created_at', 'updated_at',
             'images', 'user'
         ]
 
+    def get_category(self, obj):
+        if obj.category:
+            return {
+                "id": obj.category.id,
+                "name": obj.category.name,
+                "image": obj.category.image.url if obj.category.image else None
+            }
+        return None
 
 class AnnouncementCreateSerializer(serializers.ModelSerializer):
     images = serializers.ListField(
@@ -45,32 +60,38 @@ class AnnouncementCreateSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        required=False,
+        allow_null=True
+    )
 
     class Meta:
         model = Announcement
         fields = [
             'title', 'description', 'category',
             'condition', 'location', 'status',
-            'plan','price',
+            'plan', 'price',
             'images'
         ]
 
     def create(self, validated_data):
         images_data = validated_data.pop('images', [])
+        request = self.context.get('request', None)
+        if request and hasattr(request, 'user'):
+            validated_data['user'] = request.user
         announcement = Announcement.objects.create(**validated_data)
+
         for image_data in images_data:
-            AnnouncementImage.objects.create(announcement=announcement, image=image_data)
+            AnnouncementImage.objects.create(
+                announcement=announcement, 
+                image=image_data
+            )
         return announcement
 
-    def update(self, instance, validated_data):
-        images_data = validated_data.pop('images', [])
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
+    def to_representation(self, instance):
+        return AnnouncementSerializer(instance, context=self.context).data
 
-        for image_data in images_data:
-            AnnouncementImage.objects.create(announcement=instance, image=image_data)
-        return instance
 
 
 
@@ -90,12 +111,23 @@ class PaymentSerializer(serializers.ModelSerializer):
         plan = validated_data['plan']
         validated_data['amount'] = plan.amount
         return super().create(validated_data)
+
     
 class AnnouncementImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnnouncementImage
         fields = ['id', 'image']
 
+
+class CategoryDetailSerializer(serializers.ModelSerializer):
+    announcements = AnnouncementSerializer(
+        many=True,
+        read_only=True,
+    )
+    
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'image', 'announcements']
     
 class FavoriteSerializer(serializers.ModelSerializer):
     announcement_title = serializers.ReadOnlyField(source='announcement.title')

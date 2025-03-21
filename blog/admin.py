@@ -6,10 +6,12 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.exceptions import PermissionDenied
-from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News,Chat,Message
+from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News,Chat,Message,Banner
 from mptt.admin import DraggableMPTTAdmin
 
 User = get_user_model()
+
+admin.site.register(Banner)
 
 class AnnouncementImageInline(admin.TabularInline):
     model = AnnouncementImage

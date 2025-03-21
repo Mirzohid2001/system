@@ -7,8 +7,8 @@ from rest_framework import generics
 from django.core.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from .serializers import AnnouncementSerializer, AnnouncementCreateSerializer,PaymentSerializer,FavoriteSerializer,CommentSerializer,NewsSerializer,ChatSerializer,MessageSerializer
-from .models import Announcement, Payment,Favorite,Comment,News,Chat,Message
+from .serializers import AnnouncementSerializer, AnnouncementCreateSerializer,PaymentSerializer,FavoriteSerializer,CommentSerializer,NewsSerializer,ChatSerializer,MessageSerializer,CategoryDetailSerializer,BannerSerializer
+from .models import Announcement, Payment,Favorite,Comment,News,Chat,Message,Banner
 from rest_framework.generics import RetrieveAPIView
 from django.db.models import Q
 import random
@@ -25,6 +25,13 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 Configuration.account_id = settings.YOOKASSA_SHOP_ID
 Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
 
+
+class BannerView(APIView):
+    def get(self, request):
+        banner = Banner.objects.all()
+        serializer = BannerSerializer(banner, many=True)
+        return Response(serializer.data)
+
 class CategoryView(APIView):
     def get(self, request):
         categories = Category.objects.all()
@@ -33,7 +40,7 @@ class CategoryView(APIView):
     
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = CategoryDetailSerializer
 
 class AnnouncementListCreateView(generics.ListCreateAPIView):
     queryset = Announcement.objects.all().order_by('-priority', '-created_at')
@@ -270,18 +277,18 @@ class ChatCreateOrGetAPIView(APIView):
             chat, created = Chat.objects.get_or_create(
                 announcement=announcement
             )
-        elif product_id:
-            product = get_object_or_404(Product, id=product_id)
-            chat, created = Chat.objects.get_or_create(
-                product=product
-            )
+        # elif product_id:
+        #     product = get_object_or_404(Product, id=product_id)
+        #     chat, created = Chat.objects.get_or_create(
+        #         product=product
+        #     )
         else:
             return Response({"error": "Обязательно наличие announcement_id или product_id!"}, status=400)
 
         chat.participants.add(request.user)
 
-        if product_id:
-            chat.participants.add(product.admin)
+        # if product_id:
+        #     chat.participants.add(product.admin)
         if announcement_id:
             chat.participants.add(announcement.user)
 
