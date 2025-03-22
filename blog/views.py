@@ -93,8 +93,25 @@ class CreatePaymentAPIView(APIView):
     def post(self, request):
         serializer = PaymentSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
+
         announcement = serializer.validated_data['announcement']
         plan = serializer.validated_data['plan']
+
+        if plan.amount == 0:
+            payment_obj = serializer.save(
+                user=request.user,
+                amount=0,
+                payment_id='',
+                paid=True    
+            )
+            announcement.plan = plan
+            announcement.priority = plan.priority
+            announcement.save()
+
+            return Response({
+                "detail": "Bepul tarif tanlandi. Payment saqlandi. E'lon faollashtirildi."
+            }, status=status.HTTP_200_OK)
+
         yoo_payment = YooPayment.create({
             "amount": {
                 "value": str(plan.amount),
@@ -125,15 +142,19 @@ class CreatePaymentAPIView(APIView):
                 ]
             }
         }, uuid.uuid4())
+
         payment_obj = serializer.save(
-            user=self.request.user,
+            user=request.user,
             amount=plan.amount,
             payment_id=yoo_payment.id
         )
+
         return Response({
             "confirmation_url": yoo_payment.confirmation.confirmation_url,
             "payment_id": yoo_payment.id
         })
+
+
 
 class CheckPaymentStatusAPIView(APIView):
     def get(self, request, payment_id):
