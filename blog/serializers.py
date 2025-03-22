@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from .models import Category, Announcement, AnnouncementImage, Payment, Favorite, Comment, News, Message, Chat, Banner
+from .models import Category, Announcement, AnnouncementImage, Payment, Favorite, Comment, News, Message, Chat, Banner,Plan
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banner
         fields = ['id', 'image', 'alt_text']
+
+class PlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Plan
+        fields = ['id', 'name', 'amount', 'priority']
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

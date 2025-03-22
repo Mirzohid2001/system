@@ -8,11 +8,11 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from .serializers import (
     CategorySerializer, AnnouncementSerializer, AnnouncementCreateSerializer,
     PaymentSerializer, FavoriteSerializer, CommentSerializer, NewsSerializer,
-    ChatSerializer, MessageSerializer, CategoryDetailSerializer, BannerSerializer
+    ChatSerializer, MessageSerializer, CategoryDetailSerializer, BannerSerializer,PlanSerializer
 )
 from .models import (
     Category, Announcement, Payment, Favorite, Comment,
-    News, Chat, Message, Banner
+    News, Chat, Message, Banner,Plan
 )
 from django.db.models import Q
 import random
@@ -28,6 +28,12 @@ class BannerView(APIView):
     def get(self, request):
         banner = Banner.objects.all()
         serializer = BannerSerializer(banner, many=True)
+        return Response(serializer.data)
+    
+class PlanView(APIView):
+    def get(self, request):
+        plan = Plan.objects.all()
+        serializer = PlanSerializer(plan, many=True)
         return Response(serializer.data)
 
 class CategoryView(APIView):
