@@ -83,11 +83,21 @@ class AnnouncementCreateSerializer(serializers.ModelSerializer):
             validated_data['user'] = request.user
         announcement = Announcement.objects.create(**validated_data)
         for image_data in images_data:
-            AnnouncementImage.objects.create(announcement=announcement, image=image_data)
+            AnnouncementImage.objects.create(
+                announcement=announcement,
+                image=image_data
+            )
         return announcement
 
     def to_representation(self, instance):
         return AnnouncementSerializer(instance, context=self.context).data
+
+class CategoryDetailSerializer(serializers.ModelSerializer):
+    announcements = AnnouncementSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'image', 'announcements']
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -105,13 +115,6 @@ class PaymentSerializer(serializers.ModelSerializer):
         plan = validated_data['plan']
         validated_data['amount'] = plan.amount
         return super().create(validated_data)
-
-class CategoryDetailSerializer(serializers.ModelSerializer):
-    announcements = AnnouncementSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Category
-        fields = ['id', 'name', 'image', 'announcements']
 
 class FavoriteSerializer(serializers.ModelSerializer):
     announcement_title = serializers.ReadOnlyField(source='announcement.title')

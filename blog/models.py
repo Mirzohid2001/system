@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
 
 PLAN_CHOICES = [
@@ -66,19 +67,32 @@ class Category(MPTTModel):
 
 class Announcement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='announcements')
-    title = models.CharField(max_length=255)
-    description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='announcements')
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    description = models.TextField()
     condition = models.CharField(max_length=50, blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
-    plan = models.ForeignKey('Plan', on_delete=models.SET_NULL, null=True, blank=True)
+    plan = models.ForeignKey(Plan, on_delete=models.SET_NULL, null=True, blank=True)
     priority = models.IntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    is_negotiable = models.BooleanField(default=False)
+    views_count = models.PositiveIntegerField(default=0)
+    expiration_date = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name = 'Объявление'
+        verbose_name_plural = 'Объявления'
+        ordering = ['-priority', '-created_at']
+
     def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
         if self.plan:
             self.priority = PLAN_PRIORITY.get(self.plan.name, 1)
         super().save(*args, **kwargs)
@@ -88,15 +102,10 @@ class Announcement(models.Model):
             return "Top of the board"
         elif self.plan and self.plan.name == 'standard':
             return "Middle of the board"
-        else:
-            return "Lower part of the board"
+        return "Lower part of the board"
 
     def __str__(self):
         return self.title
-
-    class Meta:
-        verbose_name = 'Объявление'
-        verbose_name_plural = 'Объявления'
 
 class AnnouncementImage(models.Model):
     announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE, related_name='images')

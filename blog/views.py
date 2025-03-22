@@ -109,7 +109,7 @@ class CreatePaymentAPIView(APIView):
             announcement.save()
 
             return Response({
-                "detail": "Bepul tarif tanlandi. Payment saqlandi. E'lon faollashtirildi."
+                "detail": "это бесплатное объявление",
             }, status=status.HTTP_200_OK)
 
         yoo_payment = YooPayment.create({
