@@ -118,6 +118,13 @@ class AnnouncementImage(models.Model):
         verbose_name = 'Изображение объявления'
         verbose_name_plural = 'Изображения объявлений'
 
+class GalleryImage(models.Model):
+    image  = models.ImageField(upload_to='gallery/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image {self.id}"
+
 class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE)

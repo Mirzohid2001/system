@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Announcement, AnnouncementImage, Payment, Favorite, Comment, News, Message, Chat, Banner,Plan
+from .models import Category, Announcement, AnnouncementImage, Payment, Favorite, Comment, News, Message, Chat, Banner,Plan,GalleryImage
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +25,11 @@ class CategoryTreeSerializer(serializers.ModelSerializer):
 
     def get_children(self, obj):
         return CategoryTreeSerializer(obj.children.all(), many=True).data
+
+class GalleryImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GalleryImage
+        fields = ['id', 'image']
 
 class AnnouncementImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -98,6 +103,8 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'image', 'announcements']
+
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:

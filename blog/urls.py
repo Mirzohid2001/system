@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import CategoryView, CategoryDetailView, AnnouncementListCreateView, AnnouncementDetailView, FavoriteListCreateView, FavoriteDeleteView, CommentListCreateView, AnnouncementRecommendationView,GlobalSearchView,CreatePaymentAPIView,CheckPaymentStatusAPIView,NewsListView,UserChatsAPIView,ChatCreateOrGetAPIView,MessageCreateAPIView,BannerView,PlanView
+from .views import CategoryView, CategoryDetailView, AnnouncementListCreateView, AnnouncementDetailView, FavoriteListCreateView, FavoriteDeleteView, CommentListCreateView, AnnouncementRecommendationView,GlobalSearchView,CreatePaymentAPIView,CheckPaymentStatusAPIView,NewsListView,UserChatsAPIView,ChatCreateOrGetAPIView,MessageCreateAPIView,BannerView,PlanView,GalleryImageView
 
 urlpatterns = [
     path('banners/',BannerView.as_view(),name='banners'),
+    path('gallery/',GalleryImageView.as_view(),name='gallery'),
     path('plans/',PlanView.as_view(),name='plans'),
     path('categories/',CategoryView.as_view(),name='categories'),
     path('categories/<int:pk>/', CategoryDetailView.as_view(), name='category-detail'),

@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.exceptions import PermissionDenied
-from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News,Chat,Message,Banner
+from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News,Chat,Message,Banner,GalleryImage
 from mptt.admin import DraggableMPTTAdmin
 
 User = get_user_model()
@@ -34,6 +34,10 @@ class AnnouncementAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'user', 'category', 'plan', 'priority', 'created_at')
     list_filter = ('plan', 'category', 'created_at')
     search_fields = ('title', 'description', 'user__username')
+
+@admin.register(GalleryImage)
+class GalleryImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'image', 'created_at')
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
