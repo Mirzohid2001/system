@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.exceptions import PermissionDenied
-from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News,Chat,Message,Banner,GalleryImage
+from .models import Category, Announcement, AnnouncementImage, Payment, Plan, Favorite, Comment, AnalyticsDummy,News,Chat,Message,Banner,GalleryImage,OtherAnnouncement
 from mptt.admin import DraggableMPTTAdmin
 
 User = get_user_model()
@@ -118,5 +118,12 @@ class MessageAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     readonly_fields = ('created_at',)
+
+@admin.register(OtherAnnouncement)
+class OtherAnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'created_at')
+    search_fields = ('title',)
+    date_hierarchy = 'created_at'
+    ordering = ('-created_at',)
 
 

@@ -8,11 +8,12 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from .serializers import (
     CategorySerializer, AnnouncementSerializer, AnnouncementCreateSerializer,
     PaymentSerializer, FavoriteSerializer, CommentSerializer, NewsSerializer,
-    ChatSerializer, MessageSerializer, CategoryDetailSerializer, BannerSerializer,PlanSerializer,GalleryImageSerializer
+    ChatSerializer, MessageSerializer, CategoryDetailSerializer, BannerSerializer,PlanSerializer,GalleryImageSerializer,
+    OtherAnnouncementSerializer
 )
 from .models import (
     Category, Announcement, Payment, Favorite, Comment,
-    News, Chat, Message, Banner,Plan,GalleryImage
+    News, Chat, Message, Banner,Plan,GalleryImage,OtherAnnouncement
 )
 from django.db.models import Q
 import random
@@ -288,3 +289,8 @@ class UserChatsAPIView(generics.ListAPIView):
     serializer_class = ChatSerializer
     def get_queryset(self):
         return self.request.user.chats.all()
+    
+
+class OtherAnnouncementListCreateView(generics.ListCreateAPIView):
+    queryset = OtherAnnouncement.objects.all()
+    serializer_class = OtherAnnouncementSerializer
