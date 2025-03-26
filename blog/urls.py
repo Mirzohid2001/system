@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CategoryView, CategoryDetailView, AnnouncementListCreateView, AnnouncementDetailView, FavoriteListCreateView, FavoriteDeleteView, CommentListCreateView, AnnouncementRecommendationView,GlobalSearchView,CreatePaymentAPIView,CheckPaymentStatusAPIView,NewsListView,UserChatsAPIView,ChatCreateOrGetAPIView,MessageCreateAPIView,BannerView,PlanView,GalleryImageView,OtherAnnouncementListCreateView
+from .views import CategoryView, CategoryDetailView, AnnouncementListCreateView, AnnouncementDetailView, FavoriteListCreateView, FavoriteDeleteView, CommentListCreateView, AnnouncementRecommendationView,GlobalSearchView,CreatePaymentAPIView,CheckPaymentStatusAPIView,NewsListView,UserChatsAPIView,ChatCreateOrGetAPIView,MessageCreateAPIView,BannerView,PlanView,GalleryImageView,OtherAnnouncementListCreateView,OtherAnnouncementRetrieveUpdateDestroyView
 
 urlpatterns = [
     path('banners/',BannerView.as_view(),name='banners'),
@@ -17,6 +17,7 @@ urlpatterns = [
     path('announcements/<int:pk>/recommendations/', AnnouncementRecommendationView.as_view(), name='recommendations'),
     path('search/', GlobalSearchView.as_view(), name='global-search'),
     path('other-announcements/', OtherAnnouncementListCreateView.as_view(), name='other_announcements_list_create'),
+    path('other-announcements/<int:pk>/', OtherAnnouncementRetrieveUpdateDestroyView.as_view(), name='other_announcement_retrieve_update_destroy'),
     path('news/', NewsListView.as_view(), name='news-list'),
     path('chats/', UserChatsAPIView.as_view(), name='user-chats'),
     path('chats/create/', ChatCreateOrGetAPIView.as_view(), name='chat-create-or-get'),

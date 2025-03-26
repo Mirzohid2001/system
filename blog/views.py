@@ -294,3 +294,8 @@ class UserChatsAPIView(generics.ListAPIView):
 class OtherAnnouncementListCreateView(generics.ListCreateAPIView):
     queryset = OtherAnnouncement.objects.all()
     serializer_class = OtherAnnouncementSerializer
+
+
+class OtherAnnouncementRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = OtherAnnouncement.objects.all()
+    serializer_class = OtherAnnouncementSerializer 
